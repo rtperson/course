@@ -72,8 +72,8 @@ headOr ::
   a
   -> List a
   -> a
-headOr =
-  error "todo"
+headOr x Nil  = x
+headOr _ (x:._) = x
 
 -- | The product of the elements of a list.
 --
@@ -85,8 +85,10 @@ headOr =
 product ::
   List Int
   -> Int
-product =
-  error "todo"
+product = foldRight (*) 1
+
+product2 :: List Int -> Int
+product2 = foldLeft (*) 1
 
 -- | Sum the elements of the list.
 --
@@ -101,7 +103,7 @@ sum ::
   List Int
   -> Int
 sum =
-  error "todo"
+  foldLeft (+) 0 
 
 -- | Return the length of the list.
 --
@@ -112,8 +114,8 @@ sum =
 length ::
   List a
   -> Int
-length =
-  error "todo"
+length Nil = 0
+length (_:.xs) = 1 + length xs
 
 -- | Map the given function on each element of the list.
 --
@@ -127,8 +129,8 @@ map ::
   (a -> b)
   -> List a
   -> List b
-map =
-  error "todo"
+map _ Nil = Nil
+map f (x:.xs)  = (f x) :. map f xs
 
 -- | Return elements satisfying the given predicate.
 --
@@ -144,8 +146,10 @@ filter ::
   (a -> Bool)
   -> List a
   -> List a
-filter =
-  error "todo"
+filter _ Nil = Nil
+filter f (x:.xs) = if f x 
+                      then (x:.(filter f xs)) 
+                      else filter f xs
 
 -- | Append two lists to a new list.
 --
@@ -163,8 +167,9 @@ filter =
   List a
   -> List a
   -> List a
-(++) =
-  error "todo"
+(++) Nil ys = ys
+(++) xs Nil = xs
+(++) (x:.xs) ys  = x :. (xs ++ ys)
 
 infixr 5 ++
 
@@ -181,8 +186,9 @@ infixr 5 ++
 flatten ::
   List (List a)
   -> List a
-flatten =
-  error "todo"
+flatten Nil = Nil
+flatten (xs :. Nil) = xs
+flatten (xs :. ys) = xs ++ flatten ys
 
 -- | Map a function then flatten to a list.
 --
@@ -198,8 +204,8 @@ flatMap ::
   (a -> List b)
   -> List a
   -> List b
-flatMap =
-  error "todo"
+flatMap f ls = flatten $ map f ls
+
 
 -- | Flatten a list of lists to a list (again).
 -- HOWEVER, this time use the /flatMap/ function that you just wrote.
@@ -208,8 +214,7 @@ flatMap =
 flattenAgain ::
   List (List a)
   -> List a
-flattenAgain =
-  error "todo"
+flattenAgain = flatMap id
 
 -- | Convert a list of optional values to an optional list of values.
 --
@@ -259,8 +264,8 @@ find ::
   (a -> Bool)
   -> List a
   -> Optional a
-find =
-  error "todo"
+find _ Nil = Empty
+find f (x :. xs) = if f x then Full x else find f xs
 
 -- | Determine if the length of the given list is greater than 4.
 --
@@ -278,8 +283,7 @@ find =
 lengthGT4 ::
   List a
   -> Bool
-lengthGT4 =
-  error "todo"
+lengthGT4 xs = length (take 5 xs) >= 4
 
 -- | Reverse a list.
 --
@@ -292,8 +296,8 @@ lengthGT4 =
 reverse ::
   List a
   -> List a
-reverse =
-  error "todo"
+reverse Nil     = Nil
+reverse (x:.xs) = reverse xs ++ (x :. Nil)
 
 -- | Produce an infinite `List` that seeds with the given value at its head,
 -- then runs the given function for subsequent elements
@@ -307,8 +311,7 @@ produce ::
   (a -> a)
   -> a
   -> List a
-produce =
-  error "todo"
+produce f z = z :. f z :. (produce f (f (f z)))
 
 -- | Do anything other than reverse a list.
 -- Is it even possible?
@@ -322,8 +325,8 @@ produce =
 notReverse ::
   List a
   -> List a
-notReverse =
-  error "todo"
+notReverse Nil = Nil
+notReverse (x:.xs) = x :. (notReverse xs)
 
 hlist ::
   List a
